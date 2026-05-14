@@ -134,7 +134,7 @@ For local development, create a separate OAuth app (optional but recommended):
 
 ```
 Homepage URL: http://localhost:3000
-Authorization callback URL: https://your-project-ref.supabase.co/auth/v1/callback
+Authorization callback URL: https://your-project-url.supabase.co/auth/v1/callback
 ```
 
 ### 4. Environment variables
