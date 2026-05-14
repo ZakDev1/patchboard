@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="patchboard_logo.svg" width="340" alt="Patchboard" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-light.svg">
+    <img alt="Patchboard" src="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-light.svg" width="340">
+  </picture>
 </p>
 
 # Patchboard
@@ -24,7 +28,7 @@ Track and review dependency updates across your GitHub repos. Scan your `package
 - **UI** - Tailwind CSS, shadcn/ui
 - **npm data** - registry.npmjs.org (no API key required)
 - **GitHub API** - REST API for repo access and PR creation
-- 
+
 ## How it works
 
 1. Sign in with GitHub - Patchboard requests read access to your repos
@@ -127,7 +131,7 @@ Create a GitHub OAuth app at [github.com/settings/developers](https://github.com
 
 ```
 Homepage URL: https://your-project.vercel.app
-Authorization callback URL: https://your-project-ref.supabase.co/auth/v1/callback
+Authorization callback URL: https://your-project-url.supabase.co/auth/v1/callback
 ```
 
 For local development, create a separate OAuth app (optional but recommended):
@@ -187,7 +191,7 @@ Contributions are welcome. Open an issue first to discuss what you'd like to cha
 
 ## Credits
 
-- Logo — AI generated
+- Logo - AI generated
 - Built with [Next.js](https://nextjs.org), [Supabase](https://supabase.com), [shadcn/ui](https://ui.shadcn.com), and the [npm registry](https://registry.npmjs.org)
 
 ## License
