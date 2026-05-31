@@ -6,6 +6,10 @@
   </picture>
 </p>
 
+<p align="center">
+  <img alt="CI" src="https://github.com/ZakDev1/patchboard/actions/workflows/ci.yaml/badge.svg">
+</p>
+
 # Patchboard
 
 Track and review dependency updates across your GitHub repos. Scan your `package.json`, approve or snooze outdated packages, and raise a single pull request with all your changes - without even leaving the browser.
@@ -62,7 +66,6 @@ create table profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   github_username text,
   avatar_url text,
-  github_access_token text,
   created_at timestamptz default now()
 );
 
@@ -123,7 +126,61 @@ create or replace trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 ```
 
-### 3. Set up GitHub OAuth
+### 3. Enable Row Level Security
+
+Run the following in the Supabase SQL editor to enable RLS on all tables:
+
+```sql
+-- profiles
+alter table profiles enable row level security;
+
+create policy "own profile only"
+  on profiles for all
+  using (id = auth.uid());
+
+-- projects
+alter table projects enable row level security;
+
+create policy "own projects only"
+  on projects for all
+  using (user_id = auth.uid());
+
+-- snapshots (scoped through projects)
+alter table snapshots enable row level security;
+
+create policy "own snapshots only"
+  on snapshots for all
+  using (
+    exists (
+      select 1 from projects
+      where projects.id = snapshots.project_id
+      and projects.user_id = auth.uid()
+    )
+  );
+
+-- package_reviews (scoped through snapshots → projects)
+alter table package_reviews enable row level security;
+
+create policy "own package reviews only"
+  on package_reviews for all
+  using (
+    exists (
+      select 1 from snapshots
+      join projects on projects.id = snapshots.project_id
+      where snapshots.id = package_reviews.snapshot_id
+      and projects.user_id = auth.uid()
+    )
+  );
+
+-- package_metadata (shared cache, readable by all authenticated users)
+alter table package_metadata enable row level security;
+
+create policy "authenticated read"
+  on package_metadata for select
+  using (auth.role() = 'authenticated');
+```
+
+### 4. Set up GitHub OAuth
 
 In Supabase → Authentication → Providers → GitHub, enable GitHub and paste in your OAuth credentials.
 
@@ -141,7 +198,7 @@ Homepage URL: http://localhost:3000
 Authorization callback URL: https://your-project-url.supabase.co/auth/v1/callback
 ```
 
-### 4. Environment variables
+### 5. Environment variables
 
 Create a `.env.local` file:
 
@@ -151,7 +208,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 DATABASE_URL=postgresql://postgres:[password]@db.your-project-ref.supabase.co:5432/postgres?sslmode=require
 ```
 
-### 5. Run the app
+### 6. Run the app
 
 ```bash
 npm run dev
@@ -168,22 +225,6 @@ npx vercel
 ```
 
 Add the three environment variables in Vercel → Settings → Environment Variables.
-
-## Security note — Row Level Security
-
-This project does not currently enable Supabase Row Level Security (RLS) on its tables. Access control is handled at the application layer - all queries are scoped to the authenticated user via server actions, and the anon key is never used to query data directly.
-
-For a production deployment open to the public, you should enable RLS on all tables and add policies that restrict each user to their own rows. For example:
-
-```sql
-alter table projects enable row level security;
-
-create policy "Users can only access their own projects"
-  on projects for all
-  using (user_id = auth.uid());
-```
-
-The same pattern applies to `snapshots`, `package_reviews`, and `profiles`.
 
 ## Contributing
 
