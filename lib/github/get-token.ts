@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import sql from "@/lib/db";
 import { User } from "@supabase/supabase-js";
 
 export async function getGithubToken(): Promise<{ user: User; accessToken: string } | null> {
@@ -9,13 +8,11 @@ export async function getGithubToken(): Promise<{ user: User; accessToken: strin
   } = await supabase.auth.getUser();
 
   if (!user) return null;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  const [profile] = await sql`
-    select github_access_token from profiles
-    where id = ${user.id}
-  `;
+  if (!session?.provider_token) return null;
 
-  if (!profile?.github_access_token) return null;
-
-  return { user, accessToken: profile.github_access_token };
+  return { user, accessToken: session.provider_token };
 }

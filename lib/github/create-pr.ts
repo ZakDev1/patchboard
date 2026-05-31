@@ -41,7 +41,7 @@ export async function createBatchPR({ owner, repo, packages, accessToken }: Crea
     for (const pkg of packages) {
       const updateDep = (deps: Record<string, string>) => {
         if (!deps?.[pkg.name]) return deps;
-        const prefix = deps[pkg.name].match(/&[\^~]/);
+        const prefix = deps[pkg.name].match(/[\^~]/);
         deps[pkg.name] = prefix ? `${prefix[0]}${pkg.latestVersion}` : pkg.latestVersion;
         return deps;
       };

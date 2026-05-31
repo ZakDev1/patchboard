@@ -10,14 +10,9 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error && data.session) {
-      await supabase
-        .from("profiles")
-        .update({ github_access_token: data.session.provider_token })
-        .eq("id", data.session.user.id);
-
+    if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
