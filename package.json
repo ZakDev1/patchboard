@@ -15,7 +15,6 @@
     "@supabase/supabase-js": "^2.105.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "eslint-plugin-nextjs-security": "file:../../../eslint-plugin-nextjs-security",
     "lucide-react": "^1.14.0",
     "next": "16.2.6",
     "next-themes": "^0.4.6",
