@@ -14,6 +14,8 @@
 
 Track and review dependency updates across your GitHub repos. Scan your `package.json`, approve or snooze outdated packages, and raise a single pull request with all your changes - without even leaving the browser.
 
+**Live at [patchboard.vercel.app](https://patchboard.vercel.app)**
+
 ![Patchboard dashboard](public/screenshot.png)
 
 ## Features
