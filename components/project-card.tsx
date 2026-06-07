@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Project } from "@/types";
 
 export default function ProjectCard({ project }: { project: Project }) {
-  const lastSynced = project.last_synced
-    ? new Date(project.last_synced).toLocaleDateString("en-GB", {
+  const lastSynced = project.lastSynced
+    ? new Date(project.lastSynced).toLocaleDateString("en-GB", {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -19,13 +19,13 @@ export default function ProjectCard({ project }: { project: Project }) {
           <div className="flex items-center gap-3">
             <div>
               <p className="text-sm font-medium">
-                <span className="text-zinc-400">{project.repo_owner}/</span>
-                {project.repo_name}
+                <span className="text-zinc-400">{project.repoOwner}/</span>
+                {project.repoName}
               </p>
               <p className="text-xs text-zinc-400 mt-0.5">
                 {lastSynced ? `Last synced ${lastSynced}` : "Never synced"}
                 {" · "}
-                {project.snapshot_count} snapshot{project.snapshot_count !== 1 ? "s" : ""}
+                {project.snapshotCount} snapshot{project.snapshotCount !== 1 ? "s" : ""}
               </p>
             </div>
           </div>

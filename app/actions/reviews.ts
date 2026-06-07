@@ -1,12 +1,13 @@
 "use server";
 
-import sql from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { createBatchPR } from "@/lib/github/create-pr";
-import { Package } from "@/types";
 import { createClient } from "@/lib/supabase/server";
 import { getGithubToken } from "@/lib/github/get-token";
 import { redirect } from "next/navigation";
+import { db } from "@/db";
+import { packageReviews, projects, snapshots } from "@/db/schema";
+import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
 
 export async function getPackages(snapshotId: string) {
   const supabase = await createClient();
@@ -15,11 +16,13 @@ export async function getPackages(snapshotId: string) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  return sql`
-    select * from package_reviews
-    where snapshot_id = ${snapshotId}
-    order by is_major desc, package_name asc
-  ` as unknown as Package[];
+  const result = await db
+    .select()
+    .from(packageReviews)
+    .where(eq(packageReviews.snapshotId, snapshotId))
+    .orderBy(desc(packageReviews.isMajor), asc(packageReviews.packageName));
+
+  return result;
 }
 
 export async function updateReviewStatus(
@@ -34,7 +37,7 @@ export async function updateReviewStatus(
 
   if (!user) redirect("/login");
 
-  const [review] = await sql`
+  const [review] = await db.execute(sql`
     update package_reviews pr
     set
       status = ${status},
@@ -46,7 +49,7 @@ export async function updateReviewStatus(
     and s.id = pr.snapshot_id
     and user_id = ${user!.id}
     returning pr.*
-  `;
+  `);
 
   revalidatePath("/dashboard");
   return review;
@@ -58,50 +61,58 @@ export async function openBatchPR(projectId: string) {
 
   const { user, accessToken } = auth;
 
-  const [project] = await sql`
-    select * from projects
-    where id = ${projectId}
-    and user_id = ${user!.id}
-  `;
+  const [project] = await db
+    .select()
+    .from(projects)
+    .where(and(eq(projects.id, projectId), eq(projects.userId, user.id)));
 
   if (!project) throw new Error("Project not found");
 
-  const [snapshot] = await sql`
-    select * from snapshots
-    where project_id = ${project.id}
-    order by captured_at desc
-    limit 1
-  `;
+  const [snapshot] = await db
+    .select()
+    .from(snapshots)
+    .where(eq(snapshots.projectId, project.id))
+    .orderBy(desc(snapshots.capturedAt))
+    .limit(1);
 
   if (!snapshot) throw new Error("No snapshot found");
 
-  const packages = await sql`
-    select * from package_reviews
-    where snapshot_id = ${snapshot.id}
-    and status = 'approved'
-    and pr_url is null
-  `;
+  const packages = await db
+    .select()
+    .from(packageReviews)
+    .where(
+      and(
+        eq(packageReviews.snapshotId, snapshot.id),
+        eq(packageReviews.status, "approved"),
+        isNull(packageReviews.prUrl),
+      ),
+    );
 
   if (packages.length === 0) throw new Error("No approved packages");
 
   const prUrl = await createBatchPR({
-    owner: project.repo_owner,
-    repo: project.repo_name,
+    owner: project.repoOwner,
+    repo: project.repoName,
     packages: packages.map((p) => ({
-      name: p.package_name,
-      currentVersion: p.current_version,
-      latestVersion: p.latest_version,
+      name: p.packageName,
+      currentVersion: p.currentVersion,
+      latestVersion: p.latestVersion,
     })),
     accessToken: accessToken,
   });
 
-  await sql`
-    update package_reviews
-    set pr_url = ${prUrl}
-    where snapshot_id = ${snapshot.id}
-    and status = 'approved'
-    and pr_url is null
-  `;
+  await db
+    .update(packageReviews)
+    .set({
+      prUrl: prUrl,
+    })
+    .where(
+      and(
+        eq(packageReviews.snapshotId, snapshot.id),
+        eq(packageReviews.status, "approved"),
+        isNull(packageReviews.prUrl),
+      ),
+    );
 
   revalidatePath(`/dashboard/projects/${projectId}`);
   return prUrl;

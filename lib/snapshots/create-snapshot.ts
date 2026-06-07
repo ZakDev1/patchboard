@@ -1,4 +1,5 @@
-import sql from "@/lib/db";
+import { db } from "@/db";
+import { packageReviews, snapshots } from "@/db/schema";
 import { fetchPackageJson } from "@/lib/github/fetch-package-json";
 import { fetchLatestVersion, fetchRepositoryUrl } from "@/lib/npm/fetch-versions";
 import semver from "semver";
@@ -19,7 +20,7 @@ export async function createSnapshot(projectId: string, repoOwner: string, repoN
     ...packageJson.devDependencies,
   };
 
-  const [snapshot] = await sql`insert into snapshots (project_id) values (${projectId}) returning *`;
+  const [snapshot] = await db.insert(snapshots).values({ projectId: projectId }).returning();
 
   const results = await Promise.allSettled(
     Object.entries(deps).map(async ([name, rawVersion]) => {
@@ -42,18 +43,16 @@ export async function createSnapshot(projectId: string, repoOwner: string, repoN
     .map((r) => r.value);
 
   if (packages.length > 0) {
-    await sql`
-    insert into package_reviews ${sql(
+    await db.insert(packageReviews).values(
       packages.map((p: PackageResult) => ({
-        snapshot_id: snapshot.id,
-        package_name: p.name,
-        current_version: p.currentVersion,
-        latest_version: p.latestVersion,
-        is_major: p.isMajor,
-        repo_url: p.repoUrl,
+        snapshotId: snapshot.id,
+        packageName: p.name,
+        currentVersion: p.currentVersion,
+        latestVersion: p.latestVersion,
+        isMajor: p.isMajor,
+        repoUrl: p.repoUrl,
       })),
-    )}
-    `;
+    );
   }
 
   return { snapshot, packages };

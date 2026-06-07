@@ -20,19 +20,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   const pending = packages.filter((p) => p.status === "pending");
   const reviewed = packages.filter((p) => p.status !== "pending");
-  const approvedWithoutPR = packages.filter((p) => p.status === "approved" && !p.pr_url);
+  const approvedWithoutPR = packages.filter((p) => p.status === "approved" && !p.prUrl);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-lg font-semibold">
-            <span className="text-zinc-400">{project.repo_owner}/</span>
-            {project.repo_name}
+            <span className="text-zinc-400">{project.repoOwner}/</span>
+            {project.repoName}
           </h1>
           <p className="text-xs text-zinc-400 mt-0.5">
             {snapshot
-              ? `Last synced ${new Date(snapshot.captured_at).toLocaleDateString("en-GB", {
+              ? `Last synced ${new Date(snapshot.capturedAt).toLocaleDateString("en-GB", {
                   day: "numeric",
                   month: "short",
                   year: "numeric",

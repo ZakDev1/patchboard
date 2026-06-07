@@ -1,10 +1,13 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import sql from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { Project } from "@/types";
 import { redirect } from "next/navigation";
+import { db } from "@/db";
+import { and, count, desc, eq, getTableColumns, max } from "drizzle-orm";
+import { projects, snapshots } from "@/db/schema";
+import { schedules } from "@trigger.dev/sdk";
 
 export async function getProjects(): Promise<Project[]> {
   const supabase = await createClient();
@@ -14,17 +17,19 @@ export async function getProjects(): Promise<Project[]> {
 
   if (!user) redirect("/login");
 
-  return sql`
-    select
-      p.*,
-      count(distinct s.id) as snapshot_count,
-      max(s.captured_at) as last_synced
-    from projects p
-    left join snapshots s on s.project_id = p.id
-    where p.user_id = ${user!.id}
-    group by p.id
-    order by p.created_at desc
-  `;
+  const result = await db
+    .select({
+      ...getTableColumns(projects),
+      snapshotCount: count(snapshots.id),
+      lastSynced: max(snapshots.capturedAt),
+    })
+    .from(projects)
+    .leftJoin(snapshots, eq(snapshots.projectId, projects.id))
+    .where(eq(projects.userId, user.id))
+    .groupBy(projects.id)
+    .orderBy(desc(projects.createdAt));
+
+  return result;
 }
 
 export async function getProject(id: string): Promise<Project | null> {
@@ -36,13 +41,18 @@ export async function getProject(id: string): Promise<Project | null> {
     redirect("/login");
   }
 
-  const [project] = await sql`
-    select * from projects
-    where id = ${id}
-    and user_id = ${user!.id}
-  `;
+  const [project] = await db
+    .select({
+      ...getTableColumns(projects),
+      snapshotCount: count(snapshots.id),
+      lastSynced: max(snapshots.capturedAt),
+    })
+    .from(projects)
+    .leftJoin(snapshots, eq(snapshots.projectId, projects.id))
+    .where(and(eq(projects.id, id), eq(projects.userId, user.id)))
+    .groupBy(projects.id);
 
-  return (project as Project) ?? null;
+  return project;
 }
 
 export async function addProject(repoOwner: string, repoName: string) {
@@ -53,12 +63,22 @@ export async function addProject(repoOwner: string, repoName: string) {
 
   if (!user) redirect("/login");
 
-  const [project] = await sql`
-    insert into projects (user_id, repo_owner, repo_name)
-    values (${user!.id}, ${repoOwner}, ${repoName})
-    on conflict (user_id, repo_owner, repo_name) do nothing
-    returning *
-  `;
+  const [project] = await db
+    .insert(projects)
+    .values({
+      userId: user.id,
+      repoOwner,
+      repoName,
+    })
+    .onConflictDoNothing()
+    .returning();
+
+  await schedules.create({
+    task: "weekly-dependency-scan",
+    cron: "0 9 * * 1",
+    externalId: project.id,
+    deduplicationKey: project.id,
+  });
 
   revalidatePath("/dashboard");
   return project;
@@ -72,11 +92,8 @@ export async function deleteProject(id: string) {
 
   if (!user) redirect("/login");
 
-  await sql`
-    delete from projects
-    where id = ${id}
-    and user_id = ${user!.id}
-  `;
+  await db.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, user.id)));
 
+  await schedules.del(id);
   revalidatePath("/dashboard");
 }

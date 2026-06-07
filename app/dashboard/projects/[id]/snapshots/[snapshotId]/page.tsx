@@ -36,7 +36,7 @@ export default async function SnapshotPage({ params }: { params: Promise<{ id: s
           </Link>
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-semibold">
-              {new Date(snapshot.captured_at).toLocaleDateString("en-GB", {
+              {new Date(snapshot.capturedAt).toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
@@ -49,9 +49,9 @@ export default async function SnapshotPage({ params }: { params: Promise<{ id: s
             )}
           </div>
           <p className="text-xs text-zinc-400 mt-0.5">
-            {project.repo_owner}/{project.repo_name}
+            {project.repoOwner}/{project.repoName}
             {" · "}
-            {new Date(snapshot.captured_at).toLocaleTimeString("en-GB", {
+            {new Date(snapshot.capturedAt).toLocaleTimeString("en-GB", {
               hour: "2-digit",
               minute: "2-digit",
             })}

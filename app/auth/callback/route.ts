@@ -1,6 +1,8 @@
-/* eslint-disable nextjs-security/no-unprotected-api-routes */
-
+import { db } from "@/db";
+import { profiles } from "@/db/schema";
+import { encrypt } from "@/lib/encrypt";
 import { createClient } from "@/lib/supabase/server";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -10,9 +12,16 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error) {
+    if (!error && data.session) {
+      const accessToken = data.session.provider_token;
+      if (accessToken) {
+        await db
+          .update(profiles)
+          .set({ githubAccessToken: encrypt(accessToken) })
+          .where(eq(profiles.id, data.session.user.id));
+      }
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

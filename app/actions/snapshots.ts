@@ -1,12 +1,14 @@
 "use server";
 
-import sql from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { createSnapshot } from "@/lib/snapshots/create-snapshot";
 import { createClient } from "@/lib/supabase/server";
 import { Snapshot } from "@/types";
 import { getGithubToken } from "@/lib/github/get-token";
 import { redirect } from "next/navigation";
+import { db } from "@/db";
+import { and, count, desc, eq, sql } from "drizzle-orm";
+import { packageReviews, projects, snapshots } from "@/db/schema";
 
 export async function getSnapshots(projectId: string) {
   const supabase = await createClient();
@@ -15,21 +17,23 @@ export async function getSnapshots(projectId: string) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  return sql`
-    select
-      s.id,
-      s.captured_at,
-      count(pr.id) as total,
-      count(pr.id) filter (where pr.status = 'pending') as pending,
-      count(pr.id) filter (where pr.status = 'approved') as approved,
-      count(pr.id) filter (where pr.status = 'snoozed') as snoozed,
-      count(pr.id) filter (where pr.is_major = true) as major_count
-    from snapshots s
-    left join package_reviews pr on pr.snapshot_id = s.id
-    where s.project_id = ${projectId}
-    group by s.id
-    order by s.captured_at desc
-  `;
+  const result = await db
+    .select({
+      id: snapshots.id,
+      capturedAt: snapshots.capturedAt,
+      total: count(packageReviews.id),
+      pending: sql<number>`count(${packageReviews.id}) filter (where ${packageReviews.status} = 'pending')`,
+      approved: sql<number>`count(${packageReviews.id}) filter (where ${packageReviews.status} = 'approved')`,
+      snoozed: sql<number>`count(${packageReviews.id}) filter (where ${packageReviews.status} = 'snoozed')`,
+      majorCount: sql<number>`count(${packageReviews.id}) filter (where ${packageReviews.isMajor} = true)`,
+    })
+    .from(snapshots)
+    .leftJoin(packageReviews, eq(packageReviews.snapshotId, snapshots.id))
+    .where(eq(snapshots.projectId, projectId))
+    .groupBy(snapshots.id)
+    .orderBy(desc(snapshots.capturedAt));
+
+  return result;
 }
 
 export async function getSnapshot(snapshotId: string, projectId: string): Promise<Snapshot | null> {
@@ -39,13 +43,12 @@ export async function getSnapshot(snapshotId: string, projectId: string): Promis
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [snapshot] = await sql`
-    select * from snapshots
-    where id = ${snapshotId}
-    and project_id = ${projectId}
-  `;
+  const [snapshot] = await db
+    .select()
+    .from(snapshots)
+    .where(and(eq(snapshots.id, snapshotId), eq(snapshots.projectId, projectId)));
 
-  return (snapshot as Snapshot) ?? null;
+  return snapshot;
 }
 
 export async function getLatestSnapshot(projectId: string) {
@@ -55,13 +58,14 @@ export async function getLatestSnapshot(projectId: string) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [snapshot] = await sql`
-    select * from snapshots
-    where project_id = ${projectId}
-    order by captured_at desc
-    limit 1
-  `;
-  return snapshot ?? null;
+  const [snapshot] = await db
+    .select()
+    .from(snapshots)
+    .where(eq(snapshots.projectId, projectId))
+    .orderBy(desc(snapshots.capturedAt))
+    .limit(1);
+
+  return snapshot;
 }
 
 export async function syncProject(projectId: string) {
@@ -70,15 +74,14 @@ export async function syncProject(projectId: string) {
 
   const { user, accessToken } = auth;
 
-  const [project] = await sql`
-    select p.* from projects p
-    where p.id = ${projectId}
-    and user_id = ${user!.id}
-  `;
+  const [project] = await db
+    .select()
+    .from(projects)
+    .where(and(eq(projects.id, projectId), eq(projects.userId, user.id)));
 
   if (!project) throw new Error("Project not found");
 
-  const result = await createSnapshot(project.id, project.repo_owner, project.repo_name, accessToken);
+  const result = await createSnapshot(project.id, project.repoOwner, project.repoName, accessToken);
 
   revalidatePath(`/dashboard/projects/${projectId}`);
   return result;
@@ -92,13 +95,13 @@ export async function deleteSnapshot(snapshotId: string) {
 
   if (!user) redirect("/login");
 
-  await sql`
+  await db.execute(sql`
     delete from snapshots s
-    using projects p, users u
+    using projects p
     where s.id = ${snapshotId}
     and s.project_id = p.id
-    and user_id = ${user!.id}
-  `;
+    and p.user_id = ${user!.id}
+  `);
 
   revalidatePath("/dashboard");
 }

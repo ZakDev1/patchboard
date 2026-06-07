@@ -22,7 +22,7 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
             href={`/dashboard/projects/${project.id}`}
             className="text-xs text-zinc-400 hover:text-zinc-600 mb-1 block"
           >
-            ← {project.repo_owner}/{project.repo_name}
+            ← {project.repoOwner}/{project.repoName}
           </Link>
           <h1 className="text-lg font-semibold">Snapshot history</h1>
           <p className="text-xs text-zinc-400 mt-0.5">
@@ -48,7 +48,7 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">
-                      {new Date(snapshot.captured_at).toLocaleDateString("en-GB", {
+                      {new Date(snapshot.capturedAt).toLocaleDateString("en-GB", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -61,7 +61,7 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
                     )}
                   </div>
                   <p className="text-xs text-zinc-400 mt-0.5">
-                    {new Date(snapshot.captured_at).toLocaleTimeString("en-GB", {
+                    {new Date(snapshot.capturedAt).toLocaleTimeString("en-GB", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
@@ -71,9 +71,9 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
                 </div>
 
                 <div className="flex items-center gap-2 ml-4">
-                  {Number(snapshot.major_count) > 0 && (
+                  {Number(snapshot.majorCount) > 0 && (
                     <Badge variant="destructive" className="text-xs">
-                      {snapshot.major_count} major
+                      {snapshot.majorCount} major
                     </Badge>
                   )}
                   {Number(snapshot.pending) > 0 && (
@@ -81,7 +81,7 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
                       {snapshot.pending} pending
                     </Badge>
                   )}
-                  {Number(snapshot.major_count) > 0 && (
+                  {Number(snapshot.majorCount) > 0 && (
                     <Badge variant="outline" className="text-xs text-green-600 border-green-200 bg-green-50">
                       {snapshot.approved} approved
                     </Badge>

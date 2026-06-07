@@ -25,18 +25,18 @@ export default function PackageRow({ pkg }: { pkg: Package }) {
   return (
     <div className="flex items-center justify-between px-5 py-3.5">
       <div className="flex items-center gap-3 min-w-0">
-        <span className="font-mono text-sm truncate">{pkg.package_name}</span>
-        {pkg.is_major && (
+        <span className="font-mono text-sm truncate">{pkg.packageName}</span>
+        {pkg.isMajor && (
           <Badge variant="destructive" className="text-xs shrink-0">
             major
           </Badge>
         )}
         <span className="text-xs text-zinc-400 shrink-0">
-          {pkg.current_version} → {pkg.latest_version}
+          {pkg.currentVersion} → {pkg.latestVersion}
         </span>
-        {pkg.repo_url && (
+        {pkg.repoUrl && (
           <a
-            href={`${pkg.repo_url}/releases`}
+            href={`${pkg.repoUrl}/releases`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-blue-500 hover:underline shrink-0"
@@ -44,9 +44,9 @@ export default function PackageRow({ pkg }: { pkg: Package }) {
             changelog ↗
           </a>
         )}
-        {pkg.pr_url && (
+        {pkg.prUrl && (
           <a
-            href={pkg.pr_url}
+            href={pkg.prUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-blue-500 hover:underline shrink-0"

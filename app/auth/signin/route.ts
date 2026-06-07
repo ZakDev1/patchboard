@@ -1,5 +1,3 @@
-/* eslint-disable nextjs-security/no-unprotected-api-routes */
-
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 

@@ -1,12 +1,20 @@
 import AddProjectForm from "@/components/add-project-form";
 import ProjectCard from "@/components/project-card";
+import UpgradeSuccessBanner from "@/components/upgrade-success-banner";
 import { getProjects } from "../actions/projects";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ upgrade?: string }>;
+}) {
   const projects = await getProjects();
+  const { upgrade } = await searchParams;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
+      {upgrade === "true" && <UpgradeSuccessBanner />}
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-lg font-semibold">Projects</h1>

@@ -1,4 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import { decrypt } from "@/lib/encrypt";
+import { db } from "@/db";
+import { profiles } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { User } from "@supabase/supabase-js";
 
 export async function getGithubToken(): Promise<{ user: User; accessToken: string } | null> {
@@ -8,11 +12,23 @@ export async function getGithubToken(): Promise<{ user: User; accessToken: strin
   } = await supabase.auth.getUser();
 
   if (!user) return null;
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
 
-  if (!session?.provider_token) return null;
+  const [profile] = await db
+    .select({ githubAccessToken: profiles.githubAccessToken })
+    .from(profiles)
+    .where(eq(profiles.id, user.id));
 
-  return { user, accessToken: session.provider_token };
+  if (!profile?.githubAccessToken) return null;
+
+  let accessToken: string;
+  try {
+    accessToken = decrypt(profile.githubAccessToken);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+
+  console.log(user);
+
+  return { user, accessToken };
 }

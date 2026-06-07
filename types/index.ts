@@ -1,25 +1,25 @@
 export interface Package {
   id: string;
-  package_name: string;
-  current_version: string;
-  latest_version: string;
-  is_major: boolean;
+  packageName: string;
+  currentVersion: string;
+  latestVersion: string;
+  isMajor: boolean;
   status: "approved" | "snoozed" | "pending";
-  repo_url: string;
-  pr_url: string;
+  repoUrl: string | null;
+  prUrl: string | null;
 }
 
 export interface Project {
   id: string;
-  user_id: string;
-  repo_owner: string;
-  repo_name: string;
-  snapshot_count: number;
-  last_synced: string;
+  userId: string;
+  repoOwner: string;
+  repoName: string;
+  snapshotCount: number;
+  lastSynced: Date | null;
 }
 
 export interface Snapshot {
   id: string;
-  project_id: string;
-  captured_at: string;
+  projectId: string;
+  capturedAt: Date;
 }
