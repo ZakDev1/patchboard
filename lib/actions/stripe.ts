@@ -30,8 +30,8 @@ export async function createCheckoutSession() {
     customer: customerId,
     mode: "subscription",
     line_items: [{ price: process.env.STRIPE_PRO_PRICE_ID!, quantity: 1 }],
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?upgrade=true`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard?upgrade=true`,
+    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
   });
 
   redirect(session.url!);
@@ -48,7 +48,7 @@ export async function createPortalSession() {
 
   const session = await stripe.billingPortal.sessions.create({
     customer: profile.stripeCustomerId,
-    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`,
+    return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/settings`,
   });
 
   redirect(session.url);
