@@ -4,10 +4,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:16
@@ -21,7 +21,6 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,9 +28,26 @@ jobs:
           node-version: 20
           cache: "npm"
       - run: npm ci
-      - run: npx drizzle-kit push
+      - run: npx drizzle-kit push --force
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/patchboard_test
       - run: npm run test:run
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/patchboard_test
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
