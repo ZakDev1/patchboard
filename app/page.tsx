@@ -1,14 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Check, X } from "lucide-react";
 
 export default async function LandingPage() {
-  // const session = await getServerSession(authOptions)
-  // if (session) redirect("/dashboard")
-
   return (
     <div className="min-h-screen bg-white">
-      {/* Nav */}
       <header className="border-b border-zinc-100">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <span className="font-semibold text-sm tracking-tight">
@@ -30,7 +27,6 @@ export default async function LandingPage() {
         </div>
       </header>
 
-      {/* Hero */}
       <section className="max-w-5xl mx-auto px-4 pt-24 pb-16 text-center">
         <div className="inline-flex items-center gap-2 bg-zinc-100 text-zinc-500 text-xs px-3 py-1.5 rounded-full mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
@@ -58,7 +54,6 @@ export default async function LandingPage() {
         </Link>
       </section>
 
-      {/* Screenshot */}
       <section className="max-w-5xl mx-auto px-4 pb-24">
         <div className="rounded-2xl border border-zinc-200 overflow-hidden shadow-xl shadow-zinc-100">
           <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-3 flex items-center gap-2">
@@ -78,7 +73,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
       <section className="border-t border-zinc-100 bg-zinc-50">
         <div className="max-w-5xl mx-auto px-4 py-24">
           <h2 className="text-2xl font-semibold text-center mb-16">
@@ -158,7 +152,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
       <section className="max-w-5xl mx-auto px-4 py-24">
         <h2 className="text-2xl font-semibold text-center mb-4">
           Simple pricing
@@ -168,7 +161,6 @@ export default async function LandingPage() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {/* Free */}
           <div className="rounded-2xl border border-zinc-200 p-8">
             <div className="mb-6">
               <span className="text-sm font-medium text-zinc-500 uppercase tracking-wide">
@@ -184,19 +176,6 @@ export default async function LandingPage() {
 
             <ul className="space-y-3 mb-8">
               <li className="flex items-center gap-3 text-sm">
-                <svg
-                  className="w-4 h-4 text-zinc-400 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 7h18M3 12h18M3 17h18"
-                  />
-                </svg>
                 <span className="text-zinc-600">
                   Up to{" "}
                   <strong className="text-zinc-900 font-medium">
@@ -205,52 +184,25 @@ export default async function LandingPage() {
                 </span>
               </li>
               <li className="flex items-center gap-3 text-sm">
-                <svg
-                  className="w-4 h-4 text-green-500 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-zinc-600">Weekly email digest</span>
+                <span className="text-zinc-600">
+                  Up to{" "}
+                  <strong className="text-zinc-900 font-medium">
+                    5 snapshots
+                  </strong>{" "}
+                  per repository
+                </span>
               </li>
               <li className="flex items-center gap-3 text-sm">
-                <svg
-                  className="w-4 h-4 text-green-500 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-zinc-600">Snapshot history</span>
-              </li>
-              <li className="flex items-center gap-3 text-sm">
-                <svg
-                  className="w-4 h-4 text-green-500 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+                <Check className="text-green-400" size={16} />
                 <span className="text-zinc-600">One-click PRs</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <Check className="text-green-400" size={16} />
+                <span className="text-zinc-600">Manual scanning</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <X className="text-red-400" size={16} />
+                <span className="text-zinc-600">Weekly automatic scanning</span>
               </li>
             </ul>
 
@@ -261,7 +213,6 @@ export default async function LandingPage() {
             </Link>
           </div>
 
-          {/* Pro */}
           <div className="rounded-2xl border-2 border-zinc-900 bg-zinc-900 p-8 text-white relative">
             <div className="absolute top-4 right-4">
               <span className="text-xs font-medium bg-white text-zinc-900 px-2 py-0.5 rounded-full">
@@ -282,71 +233,28 @@ export default async function LandingPage() {
 
             <ul className="space-y-3 mb-8">
               <li className="flex items-center gap-3 text-sm">
-                <svg
-                  className="w-4 h-4 text-zinc-400 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 7h18M3 12h18M3 17h18"
-                  />
-                </svg>
                 <span className="text-zinc-300">
                   <strong className="text-white font-medium">Unlimited</strong>{" "}
                   repositories
                 </span>
               </li>
               <li className="flex items-center gap-3 text-sm">
-                <svg
-                  className="w-4 h-4 text-green-400 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-zinc-300">Weekly email digest</span>
+                <span className="text-zinc-300">
+                  <strong className="text-white font-medium">Unlimited</strong>{" "}
+                  snapshots
+                </span>
               </li>
               <li className="flex items-center gap-3 text-sm">
-                <svg
-                  className="w-4 h-4 text-green-400 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-zinc-300">Snapshot history</span>
-              </li>
-              <li className="flex items-center gap-3 text-sm">
-                <svg
-                  className="w-4 h-4 text-green-400 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+                <Check className="text-green-400" size={16} />
                 <span className="text-zinc-300">One-click PRs</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <Check className="text-green-400" size={16} />
+                <span className="text-zinc-300">Manual scans</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <Check className="text-green-400" size={16} />
+                <span className="text-zinc-300">Weekly automatic scanning</span>
               </li>
             </ul>
 
@@ -359,7 +267,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
       <section className="max-w-5xl mx-auto px-4 py-24 text-center">
         <h2 className="text-3xl font-semibold mb-4">
           Ready to stop ignoring updates?

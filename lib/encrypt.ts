@@ -1,5 +1,9 @@
 import crypto from "crypto";
 
+// AES-256-CBC encryption for storing GitHub OAuth tokens at rest.
+// The IV is randomly generated per encryption and prepended to the
+// ciphertext so it can be extracted during decryption.
+// Format: "iv_hex:encrypted_hex"
 const ALGORITHM = "aes-256-cbc";
 const KEY = Buffer.from(process.env.TOKEN_ENCRYPTION_KEY!, "hex");
 
@@ -12,6 +16,13 @@ export function encrypt(text: string) {
 
 export function decrypt(text: string) {
   const [iv, encrypted] = text.split(":");
-  const decipher = crypto.createDecipheriv(ALGORITHM, KEY, Buffer.from(iv, "hex"));
-  return Buffer.concat([decipher.update(Buffer.from(encrypted, "hex")), decipher.final()]).toString();
+  const decipher = crypto.createDecipheriv(
+    ALGORITHM,
+    KEY,
+    Buffer.from(iv, "hex"),
+  );
+  return Buffer.concat([
+    decipher.update(Buffer.from(encrypted, "hex")),
+    decipher.final(),
+  ]).toString();
 }
