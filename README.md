@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="public/logo-light.svg" alt="Patchboard" width="200" />
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-light.svg">
+      <img alt="Patchboard" src="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-light.svg" width="340">
+    </picture>
 </p>
 
 <p align="center">
