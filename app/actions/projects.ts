@@ -6,7 +6,7 @@ import { Project } from "@/types";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { and, count, desc, eq, getTableColumns, max } from "drizzle-orm";
-import { projects, snapshots } from "@/db/schema";
+import { profiles, projects, snapshots } from "@/db/schema";
 import { schedules } from "@trigger.dev/sdk";
 
 export async function getProjects(): Promise<Project[]> {
@@ -55,13 +55,23 @@ export async function getProject(id: string): Promise<Project | null> {
   return project;
 }
 
-export async function addProject(repoOwner: string, repoName: string) {
+export async function addProject(repoOwner: string, repoName: string): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
+
+  const [profile] = await db.select().from(profiles).where(eq(profiles.id, user.id));
+
+  if (profile.plan === "free") {
+    const projectCount = await db.select({ count: count() }).from(projects).where(eq(projects.userId, user.id));
+
+    if (projectCount[0].count >= 3) {
+      return { success: false, error: "Free plan is limited to 3 projects. Upgrade to Pro for unlimited." };
+    }
+  }
 
   const [project] = await db
     .insert(projects)
@@ -81,7 +91,7 @@ export async function addProject(repoOwner: string, repoName: string) {
   });
 
   revalidatePath("/dashboard");
-  return project;
+  return { success: true };
 }
 
 export async function deleteProject(id: string) {

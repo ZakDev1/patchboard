@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { addProject } from "@/app/actions/projects";
 import { getUserRepos } from "@/app/actions/github";
+import { toast } from "sonner";
 
 interface Repo {
   id: number;
@@ -30,7 +31,10 @@ export default function AddProjectForm() {
 
   async function handleAdd(repo: Repo) {
     setAdding(repo.fullName);
-    await addProject(repo.owner, repo.name);
+    const { success, error } = await addProject(repo.owner, repo.name);
+    if (!success && error) {
+      toast.error(error);
+    }
     setAdding(null);
     setOpen(false);
     setSearch("");
