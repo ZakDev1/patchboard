@@ -30,7 +30,7 @@ export default async function SnapshotPage({ params }: { params: Promise<{ id: s
         <div>
           <Link
             href={`/dashboard/projects/${project.id}/snapshots`}
-            className="text-xs text-zinc-400 hover:text-zinc-600 mb-1 block"
+            className="text-xs text-muted-foreground hover:text-foreground mb-1 block"
           >
             ← Snapshot history
           </Link>
@@ -43,12 +43,12 @@ export default async function SnapshotPage({ params }: { params: Promise<{ id: s
               })}
             </h1>
             {isLatest && (
-              <Badge variant="outline" className="text-xs text-zinc-400">
+              <Badge variant="outline" className="text-xs text-muted-foreground">
                 latest
               </Badge>
             )}
           </div>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {project.repoOwner}/{project.repoName}
             {" · "}
             {new Date(snapshot.capturedAt).toLocaleTimeString("en-GB", {
@@ -62,17 +62,17 @@ export default async function SnapshotPage({ params }: { params: Promise<{ id: s
       <Separator className="mb-6" />
 
       {packages.length === 0 ? (
-        <div className="border border-dashed border-zinc-300 rounded-xl py-16 text-center">
-          <p className="text-sm text-zinc-400">All dependencies were up to date</p>
+        <div className="border border-dashed border-border rounded-xl py-16 text-center">
+          <p className="text-sm text-muted-foreground">All dependencies were up to date</p>
         </div>
       ) : (
         <div className="space-y-8">
           {pending.length > 0 && (
             <section>
-              <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
                 Needs review · {pending.length}
               </p>
-              <div className="border border-zinc-200 rounded-xl divide-y divide-zinc-100 bg-white overflow-hidden">
+              <div className="border border-border rounded-xl divide-y divide-border bg-card overflow-hidden">
                 {pending.map((pkg) => (
                   <PackageRow key={pkg.id} pkg={pkg} />
                 ))}
@@ -82,10 +82,10 @@ export default async function SnapshotPage({ params }: { params: Promise<{ id: s
 
           {reviewed.length > 0 && (
             <section>
-              <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
                 Reviewed · {reviewed.length}
               </p>
-              <div className="border border-zinc-200 rounded-xl divide-y divide-zinc-100 bg-white overflow-hidden opacity-60">
+              <div className="border border-border rounded-xl divide-y divide-border bg-card overflow-hidden opacity-60">
                 {reviewed.map((pkg) => (
                   <PackageRow key={pkg.id} pkg={pkg} />
                 ))}

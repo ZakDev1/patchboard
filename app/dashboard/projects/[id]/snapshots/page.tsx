@@ -20,12 +20,12 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
         <div>
           <Link
             href={`/dashboard/projects/${project.id}`}
-            className="text-xs text-zinc-400 hover:text-zinc-600 mb-1 block"
+            className="text-xs text-muted-foreground hover:text-foreground mb-1 block"
           >
             ← {project.repoOwner}/{project.repoName}
           </Link>
           <h1 className="text-lg font-semibold">Snapshot history</h1>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {snapshots.length} snapshot{snapshots.length !== 1 ? "s" : ""}
           </p>
         </div>
@@ -34,11 +34,11 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
       <Separator className="mb-6" />
 
       {snapshots.length === 0 ? (
-        <div className="border border-dashed border-zinc-300 rounded-xl py-16 text-center">
-          <p className="text-sm text-zinc-400">No snapshots yet</p>
+        <div className="border border-dashed border-border rounded-xl py-16 text-center">
+          <p className="text-sm text-muted-foreground">No snapshots yet</p>
         </div>
       ) : (
-        <div className="border border-zinc-200 rounded-xl divide-y divide-zinc-100 bg-white overflow-hidden">
+        <div className="border border-border rounded-xl divide-y divide-border bg-card overflow-hidden">
           {snapshots.map((snapshot, index) => (
             <div key={snapshot.id} className="flex items-center justify-between px-5 py-4">
               <Link
@@ -55,12 +55,12 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
                       })}
                     </span>
                     {index === 0 && (
-                      <Badge variant="outline" className="text-sm text-zinc-400">
+                      <Badge variant="outline" className="text-sm text-muted-foreground">
                         latest
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     {new Date(snapshot.capturedAt).toLocaleTimeString("en-GB", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -77,12 +77,12 @@ export default async function SnapshotsPage({ params }: { params: Promise<{ id: 
                     </Badge>
                   )}
                   {Number(snapshot.pending) > 0 && (
-                    <Badge variant="outline" className="text-xs text-zinc-500">
+                    <Badge variant="outline" className="text-xs text-muted-foreground">
                       {snapshot.pending} pending
                     </Badge>
                   )}
                   {Number(snapshot.majorCount) > 0 && (
-                    <Badge variant="outline" className="text-xs text-green-600 border-green-200 bg-green-50">
+                    <Badge variant="outline" className="text-xs text-green-600 border-green-500/20 bg-green-500/10">
                       {snapshot.approved} approved
                     </Badge>
                   )}

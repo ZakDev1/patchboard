@@ -27,10 +27,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-lg font-semibold">
-            <span className="text-zinc-400">{project.repoOwner}/</span>
+            <span className="text-muted-foreground">{project.repoOwner}/</span>
             {project.repoName}
           </h1>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {snapshot
               ? `Last synced ${new Date(snapshot.capturedAt).toLocaleDateString("en-GB", {
                   day: "numeric",
@@ -55,8 +55,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       <Separator className="mb-6" />
 
       {packages.length === 0 ? (
-        <div className="border border-dashed border-zinc-300 rounded-xl py-16 text-center">
-          <p className="text-sm text-zinc-400">
+        <div className="border border-dashed border-border rounded-xl py-16 text-center">
+          <p className="text-sm text-muted-foreground">
             {snapshot ? "All dependencies are up to date" : "No snapshot yet — hit Sync to scan your dependencies"}
           </p>
         </div>
@@ -64,10 +64,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <div className="space-y-8">
           {pending.length > 0 && (
             <section>
-              <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
                 Needs review · {pending.length}
               </p>
-              <div className="border border-zinc-200 rounded-xl divide-y divide-zinc-100 bg-white overflow-hidden">
+              <div className="border border-border rounded-xl divide-y divide-border bg-card overflow-hidden">
                 {pending.map((pkg) => (
                   <PackageRow key={pkg.id} pkg={pkg} />
                 ))}
@@ -77,10 +77,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
           {reviewed.length > 0 && (
             <section>
-              <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
                 Reviewed · {reviewed.length}
               </p>
-              <div className="border border-zinc-200 rounded-xl divide-y divide-zinc-100 bg-white overflow-hidden opacity-60">
+              <div className="border border-border rounded-xl divide-y divide-border bg-card overflow-hidden opacity-60">
                 {reviewed.map((pkg) => (
                   <PackageRow key={pkg.id} pkg={pkg} />
                 ))}

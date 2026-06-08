@@ -48,7 +48,7 @@ export default function PackageRow({ pkg }: { pkg: Package }) {
             major
           </Badge>
         )}
-        <span className="text-xs text-zinc-400 shrink-0">
+        <span className="text-xs text-muted-foreground shrink-0">
           {pkg.currentVersion} → {pkg.latestVersion}
         </span>
         {pkg.repoUrl && (
@@ -88,7 +88,7 @@ export default function PackageRow({ pkg }: { pkg: Package }) {
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 text-xs text-zinc-400"
+              className="h-7 text-xs text-muted-foreground"
               disabled={loading}
               onClick={() => updateStatus("snoozed")}
             >
@@ -100,8 +100,8 @@ export default function PackageRow({ pkg }: { pkg: Package }) {
             variant="outline"
             className={`text-xs ${
               pkg.status === "approved"
-                ? "text-green-600 border-green-200 bg-green-50"
-                : "text-yellow-600 border-yellow-200 bg-yellow-50"
+                ? "text-green-600 border-green-500/20 bg-green-500/10"
+                : "text-yellow-600 border-yellow-500/20 bg-yellow-500/10"
             }`}
           >
             {pkg.status}

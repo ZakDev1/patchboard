@@ -22,7 +22,7 @@ export default function ProjectLoading() {
       <div className="space-y-8">
         <section>
           <Skeleton className="h-3 w-24 mb-3" />
-          <div className="border border-zinc-200 rounded-xl divide-y divide-zinc-100 bg-white overflow-hidden">
+          <div className="border border-border rounded-xl divide-y divide-border bg-card overflow-hidden">
             {Array.from({ length: 4 }).map((_, i) => (
               <PackageRowSkeleton key={i} />
             ))}

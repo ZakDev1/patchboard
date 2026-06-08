@@ -14,22 +14,23 @@ export default function ProjectCard({ project }: { project: Project }) {
 
   return (
     <Link href={`/dashboard/projects/${project.id}`}>
-      <Card className="px-5 py-4 hover:border-zinc-300 hover:shadow-sm transition-all cursor-pointer">
+      <Card className="px-5 py-4 hover:border-border hover:shadow-sm transition-all cursor-pointer">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div>
               <p className="text-sm font-medium">
-                <span className="text-zinc-400">{project.repoOwner}/</span>
+                <span className="text-muted-foreground">{project.repoOwner}/</span>
                 {project.repoName}
               </p>
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {lastSynced ? `Last synced ${lastSynced}` : "Never synced"}
                 {" · "}
-                {project.snapshotCount} snapshot{project.snapshotCount !== 1 ? "s" : ""}
+                {project.snapshotCount} snapshot
+                {project.snapshotCount !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
-          <Badge variant="outline" className="text-xs text-zinc-400">
+          <Badge variant="outline" className="text-xs text-muted-foreground">
             →
           </Badge>
         </div>

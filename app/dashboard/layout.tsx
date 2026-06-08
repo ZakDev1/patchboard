@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-zinc-200">
+      <header className="bg-background border-b border-border">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Image src="/icon.svg" alt="Patchboard" width={25} height={25} />
@@ -33,7 +33,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <Button
                   type="submit"
                   size="sm"
-                  className="h-7 text-xs gap-1.5 bg-zinc-900 hover:bg-zinc-700 text-white"
+                  className="h-7 text-xs gap-1.5"
                 >
                   <Zap className="size-3" />
                   Upgrade to Pro
@@ -44,14 +44,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 Pro
               </Badge>
             )}
-            <Separator orientation="vertical" className="h-4" />
+            <Separator orientation="vertical" className="h-7" />
             <Link href="/dashboard/settings">
-              <Avatar className="h-7 w-7 cursor-pointer ring-offset-background transition-all hover:ring-2 hover:ring-zinc-300 hover:ring-offset-1">
+              <Avatar className="h-7 w-7 cursor-pointer ring-offset-background transition-all hover:ring-2 hover:ring-border hover:ring-offset-1">
                 <AvatarImage src={avatarUrl} />
                 <AvatarFallback className="text-xs">{username?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
               </Avatar>
             </Link>
-            <Separator orientation="vertical" className="h-4" />
+            <Separator orientation="vertical" className="h-7" />
             <LogoutButton />
           </div>
         </div>

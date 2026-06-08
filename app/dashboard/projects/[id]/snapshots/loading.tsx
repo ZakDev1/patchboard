@@ -12,7 +12,7 @@ export default function SnapshotsLoading() {
 
       <Separator className="mb-6" />
 
-      <div className="border border-zinc-200 rounded-xl divide-y divide-zinc-100 bg-white overflow-hidden">
+      <div className="border border-border rounded-xl divide-y divide-border bg-card overflow-hidden">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="flex items-center justify-between px-5 py-4">
             <div className="space-y-2">

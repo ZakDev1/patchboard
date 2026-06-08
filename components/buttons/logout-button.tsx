@@ -14,7 +14,7 @@ export default function LogoutButton() {
   }
 
   return (
-    <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-zinc-900 text-xs h-7" onClick={handleSignOut}>
+    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground text-xs h-7" onClick={handleSignOut}>
       Sign out
     </Button>
   );
