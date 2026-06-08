@@ -60,7 +60,7 @@ Patchboard batches the whole process. Scan your repos, approve what you want, ra
 | Error tracking | Sentry |
 | Analytics | PostHog |
 | UI | Tailwind CSS, shadcn/ui |
-| Testing | Vitest, GitHub Actions CI |
+| Testing | Vitest, Playwright, GitHub Actions CI |
 | Deployment | Vercel |
 
 ## Architecture
@@ -181,11 +181,18 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Running tests
 
+### Unit tests
 ```bash
 npm run test:run
 ```
 
-Tests cover the core scanning logic - version comparison, major bump detection, dependency merging, and error resilience. CI runs on every push via GitHub Actions with a live Postgres service container.
+### E2E tests
+```bash
+npm run test:e2e
+```
+
+Unit cover the core scanning logic - version comparison, major bump detection, dependency merging, and error resilience. CI runs on every push via GitHub Actions with a live Postgres service container.
+E2E tests cover the landing page, auth redirects and docs site. Unit tests cover the core scanning logic - version comparison, major bump detection, dependency merging and error resilience. Both suites run on every push via GitHub Actions.
 
 ## Deployment
 
