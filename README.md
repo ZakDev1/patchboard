@@ -1,22 +1,40 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-light.svg">
-    <img alt="Patchboard" src="https://raw.githubusercontent.com/ZakDev1/patchboard/main/public/logo-light.svg" width="340">
-  </picture>
+  <img src="public/logo-light.svg" alt="Patchboard" width="200" />
 </p>
 
 <p align="center">
-  <img alt="CI" src="https://github.com/ZakDev1/patchboard/actions/workflows/ci.yaml/badge.svg">
+  <a href="https://github.com/ZakDev1/patchboard/actions/workflows/ci.yaml">
+    <img src="https://github.com/ZakDev1/patchboard/actions/workflows/ci.yaml/badge.svg" alt="CI" />
+  </a>
+  <a href="https://patchboard.vercel.app">
+    <img src="https://img.shields.io/badge/live-patchboard.vercel.app-black" alt="Live" />
+  </a>
+  <a href="https://github.com/ZakDev1/patchboard/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License" />
+  </a>
 </p>
 
-# Patchboard
+<h3 align="center">Dependency updates, reviewed not ignored.</h3>
 
-Track and review dependency updates across your GitHub repos. Scan your `package.json`, approve or snooze outdated packages, and raise a single pull request with all your changes - without even leaving the browser.
+<p align="center">
+  Patchboard scans your GitHub repos, shows you what's outdated, and lets you approve updates and raise a single PR - all without leaving the browser.
+</p>
 
-**Live at [patchboard.vercel.app](https://patchboard.vercel.app)**
+<p align="center">
+  <a href="https://patchboard.vercel.app">Live App</a> · <a href="https://patchboard.vercel.app/docs">Documentation</a>
+</p>
+
+<br />
 
 ![Patchboard dashboard](public/screenshot.png)
+
+---
+
+## The problem
+
+Most dependency updates get ignored. Not because developers don't care, but because the workflow is painful. Nine separate Dependabot PRs for nine packages, each needing a review, a merge, a CI run. It's easier to snooze the notification and move on.
+
+Patchboard batches the whole process. Scan your repos, approve what you want, raise one PR with everything in it.
 
 ## Features
 
@@ -25,23 +43,62 @@ Track and review dependency updates across your GitHub repos. Scan your `package
 - **Snapshot history** - every scan is saved so you can track how your dependency health changes over time
 - **One-click PRs** - approve your updates and raise a single pull request with all changes in one go
 - **Changelog links** - direct links to GitHub releases for every outdated package
+- **Weekly digests** - automated email summaries every Monday with your latest dependency status
+- **Free and Pro plans** - up to 3 repos free, unlimited on Pro
 
 ## Stack
 
-- **Framework** - Next.js 15 (App Router, Server Actions)
-- **Database** - Supabase (Postgres)
-- **Auth** - Supabase Auth with GitHub OAuth
-- **UI** - Tailwind CSS, shadcn/ui
-- **npm data** - registry.npmjs.org (no API key required)
-- **GitHub API** - REST API for repo access and PR creation
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router, Server Actions) |
+| Database | Supabase (PostgreSQL) |
+| ORM | Drizzle ORM |
+| Auth | Supabase Auth with GitHub OAuth |
+| Background jobs | Trigger.dev (weekly scheduled scans) |
+| Email | Resend (weekly digest, critical alerts) |
+| Billing | Stripe (test mode, webhooks) |
+| Error tracking | Sentry |
+| Analytics | PostHog |
+| UI | Tailwind CSS, shadcn/ui |
+| Testing | Vitest, GitHub Actions CI |
+| Deployment | Vercel |
 
-## How it works
+## Architecture
 
-1. Sign in with GitHub - Patchboard requests read access to your repos
-2. Add a project by selecting a repo from your GitHub account
-3. Hit **Sync** - Patchboard fetches your `package.json` and checks every dependency against the npm registry
-4. Review the results - approve updates you want, snooze ones you don't
-5. Hit **Open PR** - Patchboard creates a branch, updates `package.json` with all approved versions, and opens a pull request on your repo
+```
+┌─────────────────────────────────────────────────────┐
+│                    Next.js App                      │
+│                                                     │
+│  ┌──────────────┐        ┌──────────────────────┐   │
+│  │ Server       │        │ API Routes           │   │
+│  │ Actions      │        │ /api/webhooks/stripe │   │
+│  └──────┬───────┘        └──────────┬───────────┘   │
+│         │                           │               │
+└─────────┼───────────────────────────┼───────────────┘
+          │                           │
+    ┌─────▼─────┐               ┌─────▼─────┐
+    │  Drizzle  │               │  Stripe   │
+    │    ORM    │               │ Webhooks  │
+    └─────┬─────┘               └───────────┘
+          │
+    ┌─────▼──────────┐
+    │   Supabase     │
+    │   PostgreSQL   │
+    └────────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│                 Trigger.dev                         │
+│                                                     │
+│  weekly-dependency-scan (cron: 0 9 * * 1)           │
+│  ├── Fetch all projects from DB                     │
+│  ├── For each project:                              │
+│  │   ├── Decrypt GitHub token                       │
+│  │   ├── Fetch package.json from GitHub             │
+│  │   ├── Compare against npm registry               │
+│  │   └── Save snapshot + package reviews            │
+│  └── Send Resend email digest per user              │
+└─────────────────────────────────────────────────────┘
+```
 
 ## Local setup
 
@@ -50,8 +107,11 @@ Track and review dependency updates across your GitHub repos. Scan your `package
 - Node.js 18+
 - A [Supabase](https://supabase.com) project
 - A GitHub OAuth app
+- A [Stripe](https://stripe.com) account (test mode)
+- A [Resend](https://resend.com) account
+- A [Trigger.dev](https://trigger.dev) account
 
-### 1. Clone the repo
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/ZakDev1/patchboard.git
@@ -59,183 +119,92 @@ cd patchboard
 npm install
 ```
 
-### 2. Set up Supabase
+### 2. Environment variables
 
-Create a new Supabase project and run the following in the SQL editor:
+Create a `.env.local` file - see `.env.example` for all required values:
 
-```sql
-create table profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  github_username text,
-  avatar_url text,
-  created_at timestamptz default now()
-);
+```bash
+# Supabase
+DATABASE_URL=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
-create table projects (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references profiles(id) on delete cascade,
-  repo_owner text not null,
-  repo_name text not null,
-  created_at timestamptz default now(),
-  unique(user_id, repo_owner, repo_name)
-);
+# GitHub OAuth (via Supabase)
+# Configure at: supabase.com → Authentication → Providers → GitHub
 
-create table snapshots (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid references projects(id) on delete cascade,
-  captured_at timestamptz default now()
-);
+NEXT_PUBLIC_SITE_URL=
 
-create table package_reviews (
-  id uuid primary key default gen_random_uuid(),
-  snapshot_id uuid references snapshots(id) on delete cascade,
-  package_name text not null,
-  current_version text not null,
-  latest_version text not null,
-  is_major boolean not null default false,
-  status text not null default 'pending' check (status in ('pending', 'approved', 'snoozed')),
-  notes text,
-  reviewed_at timestamptz,
-  repo_url text,
-  pr_url text
-);
+# Stripe
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRO_PRICE_ID=
 
-create table package_metadata (
-  package_name text not null,
-  version text not null,
-  changelog_url text,
-  release_notes text,
-  fetched_at timestamptz default now(),
-  primary key (package_name, version)
-);
+# Resend
+RESEND_API_KEY=
 
--- Auto create profile on signup
-create or replace function public.handle_new_user()
-returns trigger as $$
-begin
-  insert into public.profiles (id, github_username, avatar_url)
-  values (
-    new.id,
-    new.raw_user_meta_data->>'user_name',
-    new.raw_user_meta_data->>'avatar_url'
-  );
-  return new;
-end;
-$$ language plpgsql security definer;
+# Sentry (Optional, Sentry will create its own .env.sentry-build-plugin)
+SENTRY_AUTH_TOKEN=
 
-create or replace trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
+# PostHog
+NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN=
+NEXT_PUBLIC_POSTHOG_HOST=
+
+# Token encryption (generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+TOKEN_ENCRYPTION_KEY=
 ```
 
-### 3. Enable Row Level Security
+### 3. Set up the database
 
-Run the following in the Supabase SQL editor to enable RLS on all tables:
+Run the schema in your Supabase SQL editor - see the full schema in [`db/schema.ts`](db/schema.ts).
 
-```sql
--- profiles
-alter table profiles enable row level security;
+Enable Row Level Security on all tables as documented in the [setup guide](https://patchboard.vercel.app/docs/getting-started).
 
-create policy "own profile only"
-  on profiles for all
-  using (id = auth.uid());
-
--- projects
-alter table projects enable row level security;
-
-create policy "own projects only"
-  on projects for all
-  using (user_id = auth.uid());
-
--- snapshots (scoped through projects)
-alter table snapshots enable row level security;
-
-create policy "own snapshots only"
-  on snapshots for all
-  using (
-    exists (
-      select 1 from projects
-      where projects.id = snapshots.project_id
-      and projects.user_id = auth.uid()
-    )
-  );
-
--- package_reviews (scoped through snapshots → projects)
-alter table package_reviews enable row level security;
-
-create policy "own package reviews only"
-  on package_reviews for all
-  using (
-    exists (
-      select 1 from snapshots
-      join projects on projects.id = snapshots.project_id
-      where snapshots.id = package_reviews.snapshot_id
-      and projects.user_id = auth.uid()
-    )
-  );
-
--- package_metadata (shared cache, readable by all authenticated users)
-alter table package_metadata enable row level security;
-
-create policy "authenticated read"
-  on package_metadata for select
-  using (auth.role() = 'authenticated');
-```
-
-### 4. Set up GitHub OAuth
-
-In Supabase → Authentication → Providers → GitHub, enable GitHub and paste in your OAuth credentials.
-
-Create a GitHub OAuth app at [github.com/settings/developers](https://github.com/settings/developers):
-
-```
-Homepage URL: https://your-project.vercel.app
-Authorization callback URL: https://your-project-url.supabase.co/auth/v1/callback
-```
-
-For local development, create a separate OAuth app (optional but recommended):
-
-```
-Homepage URL: http://localhost:3000
-Authorization callback URL: https://your-project-url.supabase.co/auth/v1/callback
-```
-
-### 5. Environment variables
-
-Create a `.env.local` file:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-DATABASE_URL=postgresql://postgres:[password]@db.your-project-ref.supabase.co:5432/postgres?sslmode=require
-```
-
-### 6. Run the app
+### 4. Run the app
 
 ```bash
 npm run dev
 ```
 
+### 5. Run Trigger.dev locally
+
+```bash
+npx trigger.dev@latest dev
+```
+
+### 6. Forward Stripe webhooks locally
+
+```bash
+npx stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
+
 Open [http://localhost:3000](http://localhost:3000).
+
+## Running tests
+
+```bash
+npm run test:run
+```
+
+Tests cover the core scanning logic - version comparison, major bump detection, dependency merging, and error resilience. CI runs on every push via GitHub Actions with a live Postgres service container.
 
 ## Deployment
 
-Deploy to Vercel with one command:
+Deploy to Vercel:
 
 ```bash
 npx vercel
 ```
 
-Add the three environment variables in Vercel → Settings → Environment Variables.
+Add all environment variables in Vercel → Settings → Environment Variables.
+
+For Stripe webhooks in production, set the endpoint to:
+```
+https://your-domain.vercel.app/api/webhooks/stripe
+```
 
 ## Contributing
 
 Contributions are welcome. Open an issue first to discuss what you'd like to change, then submit a pull request.
-
-## Credits
-
-- Logo - AI generated
-- Built with [Next.js](https://nextjs.org), [Supabase](https://supabase.com), [shadcn/ui](https://ui.shadcn.com), and the [npm registry](https://registry.npmjs.org)
 
 ## License
 
