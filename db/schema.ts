@@ -32,7 +32,7 @@ export const projects = pgTable(
     repoName: text("repo_name").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (t) => [unique().on(t.userId, t.repoName, t.repoName)],
+  (t) => [unique().on(t.userId, t.repoOwner, t.repoName)],
 );
 
 export const snapshots = pgTable("snapshots", {
