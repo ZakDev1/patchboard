@@ -19,7 +19,10 @@ export async function GET(request: Request) {
       if (accessToken) {
         await db
           .update(profiles)
-          .set({ githubAccessToken: encrypt(accessToken) })
+          .set({
+            githubAccessToken: encrypt(accessToken),
+            email: data.session.user.email,
+          })
           .where(eq(profiles.id, data.session.user.id));
       }
       return NextResponse.redirect(`${origin}${next}`);
