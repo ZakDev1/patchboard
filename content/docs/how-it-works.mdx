@@ -1,0 +1,32 @@
+---
+title: How It Works
+description: How Patchboard scans and reviews your dependencies
+---
+
+## Scanning
+
+When you sync a project, Patchboard:
+
+1. Fetches your `package.json` from GitHub
+2. Checks every dependency against the npm registry
+3. Compares current vs latest versions using semver
+4. Flags major version bumps separately
+
+## Review Workflow
+
+Each outdated package can be:
+
+- **Approved** — included in the next pull request
+- **Snoozed** — skipped for now, stays in your list
+
+## Pull Requests
+
+When you click **Open PR**, Patchboard:
+
+1. Creates a new branch on your repository
+2. Updates `package.json` with all approved versions
+3. Opens a pull request — ready for you to review and merge
+
+## Automated Scans
+
+Pro users get automated weekly scans every Monday morning with an email digest summarising outdated packages across all their repos.
