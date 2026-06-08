@@ -11,12 +11,22 @@ export default async function LandingPage() {
       {/* Nav */}
       <header className="border-b border-zinc-100">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="font-semibold text-sm tracking-tight">Patchboard</span>
-          <Link href="/login">
-            <Button size="sm" variant="outline">
-              Sign in
-            </Button>
-          </Link>
+          <span className="font-semibold text-sm tracking-tight">
+            Patchboard
+          </span>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/docs"
+              className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+            >
+              Docs
+            </Link>
+            <Link href="/login">
+              <Button size="sm" variant="outline">
+                Sign in
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -28,12 +38,14 @@ export default async function LandingPage() {
         </div>
 
         <h1 className="text-5xl font-semibold tracking-tight text-zinc-900 mb-5 leading-tight">
-          Dependency updates, <span className="text-zinc-400">reviewed not ignored</span>
+          Dependency updates,{" "}
+          <span className="text-zinc-400">reviewed not ignored</span>
         </h1>
 
         <p className="text-lg text-zinc-500 max-w-xl mx-auto mb-8">
-          Patchboard scans your GitHub repos, shows you what&apos;s outdated, and lets you approve updates and raise a
-          PR, all without leaving your browser.
+          Patchboard scans your GitHub repos, shows you what&apos;s outdated,
+          and lets you approve updates and raise a PR, all without leaving your
+          browser.
         </p>
 
         <Link href="/login">
@@ -69,10 +81,12 @@ export default async function LandingPage() {
       {/* Features */}
       <section className="border-t border-zinc-100 bg-zinc-50">
         <div className="max-w-5xl mx-auto px-4 py-24">
-          <h2 className="text-2xl font-semibold text-center mb-16">Everything you need, nothing you don&apos;t</h2>
+          <h2 className="text-2xl font-semibold text-center mb-16">
+            The dependency workflow that doesn&apos;t get in your way
+          </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl border border-zinc-200 p-6">
               <div className="w-9 h-9 rounded-lg bg-zinc-900 flex items-center justify-center mb-4">
                 <svg
                   className="w-4 h-4 text-white"
@@ -90,11 +104,12 @@ export default async function LandingPage() {
               </div>
               <h3 className="font-medium mb-2">Instant scanning</h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
-                Connect any GitHub repo and Patchboard scans your dependencies against the npm registry in seconds.
+                Connect any GitHub repo and Patchboard scans your dependencies
+                against the npm registry in seconds.
               </p>
             </div>
 
-            <div>
+            <div className="bg-white rounded-xl border border-zinc-200 p-6">
               <div className="w-9 h-9 rounded-lg bg-zinc-900 flex items-center justify-center mb-4">
                 <svg
                   className="w-4 h-4 text-white"
@@ -112,12 +127,12 @@ export default async function LandingPage() {
               </div>
               <h3 className="font-medium mb-2">Review workflow</h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
-                Approve or snooze each update individually. Major version bumps are flagged so nothing slips through
-                unnoticed.
+                Approve or snooze each update individually. Major version bumps
+                are flagged so nothing slips through unnoticed.
               </p>
             </div>
 
-            <div>
+            <div className="bg-white rounded-xl border border-zinc-200 p-6">
               <div className="w-9 h-9 rounded-lg bg-zinc-900 flex items-center justify-center mb-4">
                 <svg
                   className="w-4 h-4 text-white"
@@ -135,18 +150,223 @@ export default async function LandingPage() {
               </div>
               <h3 className="font-medium mb-2">One-click PRs</h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
-                Approve your updates and raise a single pull request with all changes in one go. No more nine PRs for
-                nine packages.
+                Approve your updates and raise a single pull request with all
+                changes in one go. No more nine PRs for nine packages.
               </p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Pricing */}
+      <section className="max-w-5xl mx-auto px-4 py-24">
+        <h2 className="text-2xl font-semibold text-center mb-4">
+          Simple pricing
+        </h2>
+        <p className="text-zinc-500 text-center mb-16">
+          Start free. Upgrade when you need more.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          {/* Free */}
+          <div className="rounded-2xl border border-zinc-200 p-8">
+            <div className="mb-6">
+              <span className="text-sm font-medium text-zinc-500 uppercase tracking-wide">
+                Free
+              </span>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-4xl font-semibold tracking-tight">
+                  £0
+                </span>
+                <span className="text-zinc-400 text-sm">/month</span>
+              </div>
+            </div>
+
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-center gap-3 text-sm">
+                <svg
+                  className="w-4 h-4 text-zinc-400 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 7h18M3 12h18M3 17h18"
+                  />
+                </svg>
+                <span className="text-zinc-600">
+                  Up to{" "}
+                  <strong className="text-zinc-900 font-medium">
+                    3 repositories
+                  </strong>
+                </span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <svg
+                  className="w-4 h-4 text-green-500 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span className="text-zinc-600">Weekly email digest</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <svg
+                  className="w-4 h-4 text-green-500 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span className="text-zinc-600">Snapshot history</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <svg
+                  className="w-4 h-4 text-green-500 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span className="text-zinc-600">One-click PRs</span>
+              </li>
+            </ul>
+
+            <Link href="/login">
+              <Button variant="outline" className="w-full">
+                Get started free
+              </Button>
+            </Link>
+          </div>
+
+          {/* Pro */}
+          <div className="rounded-2xl border-2 border-zinc-900 bg-zinc-900 p-8 text-white relative">
+            <div className="absolute top-4 right-4">
+              <span className="text-xs font-medium bg-white text-zinc-900 px-2 py-0.5 rounded-full">
+                Pro
+              </span>
+            </div>
+            <div className="mb-6">
+              <span className="text-sm font-medium text-zinc-400 uppercase tracking-wide">
+                Pro
+              </span>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-4xl font-semibold tracking-tight">
+                  £5
+                </span>
+                <span className="text-zinc-400 text-sm">/month</span>
+              </div>
+            </div>
+
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-center gap-3 text-sm">
+                <svg
+                  className="w-4 h-4 text-zinc-400 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 7h18M3 12h18M3 17h18"
+                  />
+                </svg>
+                <span className="text-zinc-300">
+                  <strong className="text-white font-medium">Unlimited</strong>{" "}
+                  repositories
+                </span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <svg
+                  className="w-4 h-4 text-green-400 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span className="text-zinc-300">Weekly email digest</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <svg
+                  className="w-4 h-4 text-green-400 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span className="text-zinc-300">Snapshot history</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <svg
+                  className="w-4 h-4 text-green-400 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span className="text-zinc-300">One-click PRs</span>
+              </li>
+            </ul>
+
+            <Link href="/login">
+              <Button className="w-full bg-white text-zinc-900 hover:bg-zinc-100">
+                Upgrade to Pro
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Bottom CTA */}
       <section className="max-w-5xl mx-auto px-4 py-24 text-center">
-        <h2 className="text-3xl font-semibold mb-4">Ready to stop ignoring updates?</h2>
-        <p className="text-zinc-500 mb-8">Free, open source, and takes 30 seconds to set up.</p>
+        <h2 className="text-3xl font-semibold mb-4">
+          Ready to stop ignoring updates?
+        </h2>
+        <p className="text-zinc-500 mb-8">
+          Free, open source, and takes 30 seconds to set up.
+        </p>
         <Link href="/login">
           <Button size="lg" className="gap-2">
             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
@@ -159,7 +379,9 @@ export default async function LandingPage() {
 
       <footer className="border-t border-zinc-100">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="text-xs text-zinc-400">Patchboard · Open source</span>
+          <span className="text-xs text-zinc-400">
+            Patchboard · Open source
+          </span>
           <a
             href="https://github.com/ZakDev1/patchboard"
             target="_blank"
