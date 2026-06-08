@@ -8,6 +8,7 @@ import { db } from "@/db";
 import { and, count, desc, eq, getTableColumns, max } from "drizzle-orm";
 import { profiles, projects, snapshots } from "@/db/schema";
 import { schedules } from "@trigger.dev/sdk";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 export async function getProjects(): Promise<Project[]> {
   const supabase = await createClient();
@@ -90,6 +91,16 @@ export async function addProject(repoOwner: string, repoName: string): Promise<{
     deduplicationKey: project.id,
   });
 
+  const posthog = getPostHogClient();
+  posthog.capture({
+    distinctId: user.id,
+    event: "project_created",
+    properties: {
+      repo_owner: repoOwner,
+      repo_name: repoName,
+    },
+  });
+
   revalidatePath("/dashboard");
   return { success: true };
 }
@@ -105,5 +116,13 @@ export async function deleteProject(id: string) {
   await db.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, user.id)));
 
   await schedules.del(id);
+
+  const posthog = getPostHogClient();
+  posthog.capture({
+    distinctId: user.id,
+    event: "project_deleted",
+    properties: { project_id: id },
+  });
+
   revalidatePath("/dashboard");
 }

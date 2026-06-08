@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { syncProject } from "@/app/actions/snapshots";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 export default function SyncButton({ projectId }: { projectId: string }) {
   const [loading, setLoading] = useState(false);
@@ -13,8 +14,10 @@ export default function SyncButton({ projectId }: { projectId: string }) {
     try {
       await syncProject(projectId);
       toast.success("Snapshot created");
+      posthog.capture("project_synced", { project_id: projectId });
     } catch (err) {
       toast.error("Failed to sync - check the repo is accessible");
+      posthog.captureException(err);
       console.error(err);
     } finally {
       setLoading(false);

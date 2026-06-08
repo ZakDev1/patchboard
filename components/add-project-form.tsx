@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { addProject } from "@/app/actions/projects";
 import { getUserRepos } from "@/app/actions/github";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 interface Repo {
   id: number;
@@ -34,6 +35,15 @@ export default function AddProjectForm() {
     const { success, error } = await addProject(repo.owner, repo.name);
     if (!success && error) {
       toast.error(error);
+      posthog.capture("project_add_failed", {
+        repo: repo.fullName,
+        error,
+      });
+    } else if (success) {
+      posthog.capture("project_added", {
+        repo: repo.fullName,
+        is_private: repo.private,
+      });
     }
     setAdding(null);
     setOpen(false);

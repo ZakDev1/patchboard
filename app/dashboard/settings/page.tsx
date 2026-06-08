@@ -1,11 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
-import { getUserPlan, createCheckoutSession, createPortalSession } from "@/lib/actions/stripe";
+import { getUserPlan, createPortalSession } from "@/lib/actions/stripe";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Zap, Check, User, CreditCard } from "lucide-react";
 import { redirect } from "next/navigation";
+import UpgradeButton from "@/components/buttons/upgrade-button";
 
 const PRO_FEATURES = [
   "Unlimited projects",
@@ -120,16 +121,7 @@ export default async function SettingsPage() {
                     </li>
                   ))}
                 </ul>
-                <form action={createCheckoutSession}>
-                  <Button
-                    type="submit"
-                    size="sm"
-                    className="h-8 text-xs gap-1.5 bg-amber-500 hover:bg-amber-600 text-white w-full"
-                  >
-                    <Zap className="size-3" />
-                    Upgrade to Pro
-                  </Button>
-                </form>
+                <UpgradeButton />
               </div>
             </div>
           </div>

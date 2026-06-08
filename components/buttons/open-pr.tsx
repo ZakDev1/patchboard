@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { openBatchPR } from "@/app/actions/reviews";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 export default function OpenPRButton({ projectId, approvedCount }: { projectId: string; approvedCount: number }) {
   const [loading, setLoading] = useState(false);
@@ -17,8 +18,14 @@ export default function OpenPRButton({ projectId, approvedCount }: { projectId: 
         window.open(prUrl, "_blank");
       }
       toast.success("PR opened successfully");
+      posthog.capture("pr_opened", {
+        project_id: projectId,
+        approved_count: approvedCount,
+        pr_url: prUrl,
+      });
     } catch (err) {
       toast.error("Failed to open PR - check your GitHub permissions");
+      posthog.captureException(err);
       console.error(err);
     } finally {
       setLoading(false);

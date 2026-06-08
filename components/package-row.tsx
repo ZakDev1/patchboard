@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { updateReviewStatus } from "@/app/actions/reviews";
 import { Package } from "@/types";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 export default function PackageRow({ pkg }: { pkg: Package }) {
   const [loading, setLoading] = useState(false);
@@ -14,8 +15,24 @@ export default function PackageRow({ pkg }: { pkg: Package }) {
     setLoading(true);
     try {
       await updateReviewStatus(pkg.id, status);
+      if (status === "approved") {
+        posthog.capture("package_approved", {
+          package_name: pkg.packageName,
+          current_version: pkg.currentVersion,
+          latest_version: pkg.latestVersion,
+          is_major: pkg.isMajor,
+        });
+      } else if (status === "snoozed") {
+        posthog.capture("package_snoozed", {
+          package_name: pkg.packageName,
+          current_version: pkg.currentVersion,
+          latest_version: pkg.latestVersion,
+          is_major: pkg.isMajor,
+        });
+      }
     } catch (err) {
       toast.error("Failed to update - please try again");
+      posthog.captureException(err);
       console.error(err);
     } finally {
       setLoading(false);
