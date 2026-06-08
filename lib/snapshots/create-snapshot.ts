@@ -6,10 +6,10 @@ import {
   fetchRepositoryUrl,
 } from "@/lib/npm/fetch-versions";
 import semver from "semver";
-import { createClient } from "../supabase/server";
 import { redirect } from "next/navigation";
 import { count, eq } from "drizzle-orm";
 import { Snapshot } from "@/types";
+import { createClient } from "../supabase/client";
 
 interface PackageResult {
   name: string;
@@ -29,7 +29,7 @@ export async function createSnapshot(
   packages: PackageResult[] | null;
   error?: string;
 }> {
-  const supabase = await createClient();
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

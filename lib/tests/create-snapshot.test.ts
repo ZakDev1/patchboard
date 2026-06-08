@@ -9,6 +9,16 @@ vi.mock("@/lib/npm/fetch-versions", () => ({
   fetchRepositoryUrl: vi.fn(),
 }));
 
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: vi.fn(() => ({
+    auth: {
+      getUser: vi.fn().mockResolvedValue({
+        data: { user: { id: "550e8400-e29b-41d4-a716-446655440000" } },
+      }),
+    },
+  })),
+}));
+
 vi.mock("@/db", () => ({
   db: {
     insert: vi.fn(() => ({
@@ -16,6 +26,11 @@ vi.mock("@/db", () => ({
         returning: vi
           .fn()
           .mockResolvedValue([{ id: "550e8400-e29b-41d4-a716-446655440000" }]),
+      })),
+    })),
+    select: vi.fn(() => ({
+      from: vi.fn(() => ({
+        where: vi.fn().mockResolvedValue([{ plan: "pro", count: 0 }]),
       })),
     })),
   },
