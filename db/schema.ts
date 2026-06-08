@@ -1,10 +1,20 @@
-import { pgTable, uuid, text, timestamp, unique, boolean, pgEnum, primaryKey } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  unique,
+  boolean,
+  pgEnum,
+  primaryKey,
+} from "drizzle-orm/pg-core";
 
 export const profiles = pgTable("profiles", {
   id: uuid("id").primaryKey(),
   githubUsername: text("github_username"),
   avatarUrl: text("avatar_url"),
   githubAccessToken: text("github_access_token").notNull(),
+  email: text("email").notNull(),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
   plan: text("plan").notNull().default("free"),
@@ -37,7 +47,9 @@ export const statusEnum = pgEnum("status", ["pending", "approved", "snoozed"]);
 
 export const packageReviews = pgTable("package_reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
-  snapshotId: uuid("snapshot_id").references(() => snapshots.id, { onDelete: "cascade" }),
+  snapshotId: uuid("snapshot_id").references(() => snapshots.id, {
+    onDelete: "cascade",
+  }),
   packageName: text("package_name").notNull(),
   currentVersion: text("current_version").notNull(),
   latestVersion: text("latest_version").notNull(),
