@@ -16,6 +16,10 @@ export const weeklyDependencyScan = schedules.task({
 
     for (const profile of allProfiles) {
       try {
+        if (profile.plan === "free") {
+          return;
+        }
+
         const userProjects = await db
           .select()
           .from(projects)

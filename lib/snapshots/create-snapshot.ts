@@ -1,8 +1,15 @@
 import { db } from "@/db";
-import { packageReviews, snapshots } from "@/db/schema";
+import { packageReviews, profiles, snapshots } from "@/db/schema";
 import { fetchPackageJson } from "@/lib/github/fetch-package-json";
-import { fetchLatestVersion, fetchRepositoryUrl } from "@/lib/npm/fetch-versions";
+import {
+  fetchLatestVersion,
+  fetchRepositoryUrl,
+} from "@/lib/npm/fetch-versions";
 import semver from "semver";
+import { createClient } from "../supabase/server";
+import { redirect } from "next/navigation";
+import { count, eq } from "drizzle-orm";
+import { Snapshot } from "@/types";
 
 interface PackageResult {
   name: string;
@@ -12,7 +19,44 @@ interface PackageResult {
   repoUrl: string | null;
 }
 
-export async function createSnapshot(projectId: string, repoOwner: string, repoName: string, accessToken: string) {
+export async function createSnapshot(
+  projectId: string,
+  repoOwner: string,
+  repoName: string,
+  accessToken: string,
+): Promise<{
+  snapshot: Snapshot | null;
+  packages: PackageResult[] | null;
+  error?: string;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
+  const [profile] = await db
+    .select()
+    .from(profiles)
+    .where(eq(profiles.id, user.id));
+
+  if (profile.plan === "free") {
+    const snapshotCount = await db
+      .select({ count: count() })
+      .from(snapshots)
+      .where(eq(snapshots.projectId, projectId));
+
+    if (snapshotCount[0].count >= 5) {
+      return {
+        snapshot: null,
+        packages: null,
+        error:
+          "Free plan is limited to 5 snapshots. Upgrade to Pro for unlimited.",
+      };
+    }
+  }
+
   const packageJson = await fetchPackageJson(repoOwner, repoName, accessToken);
 
   const deps = {
@@ -20,7 +64,10 @@ export async function createSnapshot(projectId: string, repoOwner: string, repoN
     ...packageJson.devDependencies,
   };
 
-  const [snapshot] = await db.insert(snapshots).values({ projectId: projectId }).returning();
+  const [snapshot] = await db
+    .insert(snapshots)
+    .values({ projectId: projectId })
+    .returning();
 
   const results = await Promise.allSettled(
     Object.entries(deps).map(async ([name, rawVersion]) => {
@@ -38,7 +85,8 @@ export async function createSnapshot(projectId: string, repoOwner: string, repoN
 
   const packages = results
     .filter(
-      (r): r is PromiseFulfilledResult<NonNullable<PackageResult>> => r.status === "fulfilled" && r.value !== null,
+      (r): r is PromiseFulfilledResult<NonNullable<PackageResult>> =>
+        r.status === "fulfilled" && r.value !== null,
     )
     .map((r) => r.value);
 

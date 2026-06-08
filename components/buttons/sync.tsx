@@ -12,7 +12,10 @@ export default function SyncButton({ projectId }: { projectId: string }) {
   async function handleSync() {
     setLoading(true);
     try {
-      await syncProject(projectId);
+      const { error } = await syncProject(projectId);
+      if (error) {
+        return toast.error(error);
+      }
       toast.success("Snapshot created");
       posthog.capture("project_synced", { project_id: projectId });
     } catch (err) {

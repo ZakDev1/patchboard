@@ -36,7 +36,10 @@ export async function getSnapshots(projectId: string) {
   return result;
 }
 
-export async function getSnapshot(snapshotId: string, projectId: string): Promise<Snapshot | null> {
+export async function getSnapshot(
+  snapshotId: string,
+  projectId: string,
+): Promise<Snapshot | null> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -46,7 +49,9 @@ export async function getSnapshot(snapshotId: string, projectId: string): Promis
   const [snapshot] = await db
     .select()
     .from(snapshots)
-    .where(and(eq(snapshots.id, snapshotId), eq(snapshots.projectId, projectId)));
+    .where(
+      and(eq(snapshots.id, snapshotId), eq(snapshots.projectId, projectId)),
+    );
 
   return snapshot;
 }
@@ -81,7 +86,12 @@ export async function syncProject(projectId: string) {
 
   if (!project) throw new Error("Project not found");
 
-  const result = await createSnapshot(project.id, project.repoOwner, project.repoName, accessToken);
+  const result = await createSnapshot(
+    project.id,
+    project.repoOwner,
+    project.repoName,
+    accessToken,
+  );
 
   revalidatePath(`/dashboard/projects/${projectId}`);
   return result;
