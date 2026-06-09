@@ -10,7 +10,11 @@ import { getProject } from "@/app/actions/projects";
 import { getLatestSnapshot } from "@/app/actions/snapshots";
 import { getPackages } from "@/app/actions/reviews";
 
-export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const project = await getProject(id);
   if (!project) notFound();
@@ -20,7 +24,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   const pending = packages.filter((p) => p.status === "pending");
   const reviewed = packages.filter((p) => p.status !== "pending");
-  const approvedWithoutPR = packages.filter((p) => p.status === "approved" && !p.prUrl);
+  const approvedWithoutPR = packages.filter(
+    (p) => p.status === "approved" && !p.prUrl,
+  );
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -32,17 +38,23 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
             {snapshot
-              ? `Last synced ${new Date(snapshot.capturedAt).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}`
+              ? `Last synced ${new Date(snapshot.capturedAt).toLocaleDateString(
+                  "en-GB",
+                  {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  },
+                )}`
               : "Never synced"}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <DeleteProjectButton projectId={id} />
-          <OpenPRButton projectId={id} approvedCount={approvedWithoutPR.length} />
+          <OpenPRButton
+            projectId={id}
+            approvedCount={approvedWithoutPR.length}
+          />
           <Link href={`/dashboard/projects/${id}/snapshots`}>
             <Button size="sm" variant="outline">
               History
@@ -57,7 +69,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       {packages.length === 0 ? (
         <div className="border border-dashed border-border rounded-xl py-16 text-center">
           <p className="text-sm text-muted-foreground">
-            {snapshot ? "All dependencies are up to date" : "No snapshot yet — hit Sync to scan your dependencies"}
+            {snapshot
+              ? "All dependencies are up to date"
+              : "No snapshot yet - hit Sync to scan your dependencies"}
           </p>
         </div>
       ) : (

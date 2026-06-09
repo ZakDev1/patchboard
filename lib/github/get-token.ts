@@ -5,7 +5,10 @@ import { profiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { User } from "@supabase/supabase-js";
 
-export async function getGithubToken(): Promise<{ user: User; accessToken: string } | null> {
+export async function getGithubToken(): Promise<{
+  user: User;
+  accessToken: string;
+} | null> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -27,8 +30,6 @@ export async function getGithubToken(): Promise<{ user: User; accessToken: strin
     console.error(error);
     return null;
   }
-
-  console.log(user);
 
   return { user, accessToken };
 }

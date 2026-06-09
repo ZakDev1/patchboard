@@ -73,7 +73,9 @@ export async function getLatestSnapshot(projectId: string) {
   return snapshot;
 }
 
-export async function syncProject(projectId: string) {
+export async function syncProject(
+  projectId: string,
+): Promise<{ success: boolean; error?: string }> {
   const auth = await getGithubToken();
   if (!auth) redirect("/login");
 
@@ -84,7 +86,9 @@ export async function syncProject(projectId: string) {
     .from(projects)
     .where(and(eq(projects.id, projectId), eq(projects.userId, user.id)));
 
-  if (!project) throw new Error("Project not found");
+  if (!project) {
+    return { success: false, error: "Project not found" };
+  }
 
   const result = await createSnapshot(
     project.id,
@@ -93,8 +97,12 @@ export async function syncProject(projectId: string) {
     accessToken,
   );
 
+  if (result.error) {
+    return { success: false, error: result.error };
+  }
+
   revalidatePath(`/dashboard/projects/${projectId}`);
-  return result;
+  return { success: true };
 }
 
 export async function deleteSnapshot(snapshotId: string) {

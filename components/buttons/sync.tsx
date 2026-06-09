@@ -12,8 +12,8 @@ export default function SyncButton({ projectId }: { projectId: string }) {
   async function handleSync() {
     setLoading(true);
     try {
-      const { error } = await syncProject(projectId);
-      if (error) {
+      const { success, error } = await syncProject(projectId);
+      if (!success && error) {
         return toast.error(error);
       }
       toast.success("Snapshot created");

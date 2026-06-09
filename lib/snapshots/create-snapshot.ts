@@ -9,7 +9,7 @@ import semver from "semver";
 import { redirect } from "next/navigation";
 import { count, eq } from "drizzle-orm";
 import { Snapshot } from "@/types";
-import { createClient } from "../supabase/client";
+import { createClient } from "../supabase/server";
 
 interface PackageResult {
   name: string;
@@ -29,7 +29,7 @@ export async function createSnapshot(
   packages: PackageResult[] | null;
   error?: string;
 }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -57,11 +57,23 @@ export async function createSnapshot(
     }
   }
 
-  const packageJson = await fetchPackageJson(repoOwner, repoName, accessToken);
+  const { hasPackageJson, deps } = await fetchPackageJson(
+    repoOwner,
+    repoName,
+    accessToken,
+  );
 
-  const deps = {
-    ...packageJson.dependencies,
-    ...packageJson.devDependencies,
+  if (!hasPackageJson) {
+    return {
+      snapshot: null,
+      packages: null,
+      error: "Ensure repo has a package.json",
+    };
+  }
+
+  const allDeps = {
+    ...deps?.dependencies,
+    ...deps?.devDependencies,
   };
 
   const [snapshot] = await db
@@ -70,7 +82,7 @@ export async function createSnapshot(
     .returning();
 
   const results = await Promise.allSettled(
-    Object.entries(deps).map(async ([name, rawVersion]) => {
+    Object.entries(allDeps).map(async ([name, rawVersion]) => {
       const currentVersion = semver.coerce(rawVersion)?.version ?? rawVersion;
       const latestVersion = await fetchLatestVersion(name);
       const repoUrl = await fetchRepositoryUrl(name);
