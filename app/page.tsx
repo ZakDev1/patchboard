@@ -8,7 +8,7 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-white">
       <header className="border-b border-zinc-100">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="font-semibold text-sm tracking-tight">
+          <span className="font-semibold text-sm tracking-tight text-zinc-700">
             Patchboard
           </span>
           <div className="flex items-center gap-4">
@@ -19,7 +19,11 @@ export default async function LandingPage() {
               Docs
             </Link>
             <Link href="/login">
-              <Button size="sm" variant="outline">
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-zinc-700 hover:text-zinc-500 bg-zinc-200!"
+              >
                 Sign in
               </Button>
             </Link>
@@ -75,7 +79,7 @@ export default async function LandingPage() {
 
       <section className="border-t border-zinc-100 bg-zinc-50">
         <div className="max-w-5xl mx-auto px-4 py-24">
-          <h2 className="text-2xl font-semibold text-center mb-16">
+          <h2 className="text-2xl font-semibold text-center mb-16 text-zinc-700">
             The dependency workflow that doesn&apos;t get in your way
           </h2>
 
@@ -96,7 +100,9 @@ export default async function LandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="font-medium mb-2">Instant scanning</h3>
+              <h3 className="font-medium mb-2 text-zinc-700">
+                Instant scanning
+              </h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
                 Connect any GitHub repo and Patchboard scans your dependencies
                 against the npm registry in seconds.
@@ -119,7 +125,9 @@ export default async function LandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="font-medium mb-2">Review workflow</h3>
+              <h3 className="font-medium mb-2 text-zinc-700">
+                Review workflow
+              </h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
                 Approve or snooze each update individually. Major version bumps
                 are flagged so nothing slips through unnoticed.
@@ -142,7 +150,7 @@ export default async function LandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="font-medium mb-2">One-click PRs</h3>
+              <h3 className="font-medium mb-2 text-zinc-700">One-click PRs</h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
                 Approve your updates and raise a single pull request with all
                 changes in one go. No more nine PRs for nine packages.
@@ -153,7 +161,7 @@ export default async function LandingPage() {
       </section>
 
       <section className="max-w-5xl mx-auto px-4 py-24">
-        <h2 className="text-2xl font-semibold text-center mb-4">
+        <h2 className="text-2xl font-semibold text-zinc-700 text-center mb-4">
           Simple pricing
         </h2>
         <p className="text-zinc-500 text-center mb-16">
@@ -167,7 +175,7 @@ export default async function LandingPage() {
                 Free
               </span>
               <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-4xl font-semibold tracking-tight">
+                <span className="text-4xl font-semibold tracking-tight text-zinc-700">
                   £0
                 </span>
                 <span className="text-zinc-400 text-sm">/month</span>
@@ -207,7 +215,10 @@ export default async function LandingPage() {
             </ul>
 
             <Link href="/login">
-              <Button variant="outline" className="w-full">
+              <Button
+                variant="outline"
+                className="w-full text-zinc-700 hover:text-zinc-500 bg-zinc-200!"
+              >
                 Get started free
               </Button>
             </Link>
@@ -268,7 +279,7 @@ export default async function LandingPage() {
       </section>
 
       <section className="max-w-5xl mx-auto px-4 py-24 text-center">
-        <h2 className="text-3xl font-semibold mb-4">
+        <h2 className="text-3xl text-zinc-700 font-semibold mb-4">
           Ready to stop ignoring updates?
         </h2>
         <p className="text-zinc-500 mb-8">
