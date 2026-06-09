@@ -1,4 +1,4 @@
 {
   "title": "Patchboard",
-  "pages": ["index", "getting-started", "how-it-works"]
+  "pages": ["index", "getting-started", "how-it-works", "changelog"]
 }
